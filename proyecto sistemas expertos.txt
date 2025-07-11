@@ -1,0 +1,149 @@
+﻿A. Título y Enfoque Final del Proyecto
+* Título: "Sistema Experto de Soporte a la Decisión para la Optimización de Rutas de Emergencia Basado en un Modelo de Costo Dual Dependiente del Tiempo"
+* Enfoque: Desarrollar un sistema que calcula y recomienda dos tipos de rutas óptimas para vehículos de emergencia: 
+1) la ruta más rápida en términos de tiempo esperado y 
+2) la ruta más segura o fiable, que minimiza la incertidumbre. El sistema actúa como un recomendador, presentando opciones justificadas para que un despachador humano tome la decisión final.
+B. Justificación Académica (Alineación con el Curso)
+Este proyecto cumple de manera robusta con el enfoque temático: Aplicación de probabilidades y modelos bayesianos para abordar problemas con alto nivel de incertidumbre. Se pueden integrar técnicas de optimización y satisfacción de restricciones para lograr soluciones eficientes.
+* Probabilidades e Incertidumbre: Modelamos el tiempo de viaje de cada calle como una variable aleatoria con una media (μ) y una desviación estándar (σ). La
+σ representa la incertidumbre o volatilidad de la vía, capturando la realidad de entornos con datos limitados.
+* Optimización: Utilizamos el algoritmo A*, un método de búsqueda informado y eficiente , para resolver el Problema del Camino Más Corto Dependiente del Tiempo (TDSPP). Lo ejecutamos dos veces con dos funciones de costo distintas, una para minimizar el tiempo esperado (μ) y otra para minimizar una medida de riesgo (μ + k*σ), lo cual es un enfoque de optimización robusta simplificada.
+* Satisfacción de Restricciones: El sistema maneja restricciones estáticas (sentidos de las vías, jerarquía vial) y dinámicas (incidentes que bloquean calles, asignando un costo infinito).
+C. Roles y Responsabilidades Detalladas
+   * Danilo (Líder / Arquitecto): Dirige el proyecto, integra los módulos y diseña el flujo principal que llama al motor de A* dos veces y presenta las recomendaciones.
+   * Luz (Ingeniera de Datos / Modelado de Grafo): Responsable de crear el grafo en NetworkX. Su tarea crítica es añadir los atributos estáticos a cada arco: tipo_via, velocidad_base, calidad_via, y el crucial sigma_base que cuantifica la incertidumbre inherente de cada calle.
+   * Edith (Especialista en Algoritmos / Motor de Ruteo): Implementa el algoritmo A* con la heurística admisible h(n) = Distancia_Geodésica / Velocidad_Máxima_Global. Su tarea principal es programar las dos funciones de costo: Costo_Rapido(e) = μ(e) y Costo_Seguro(e) = μ(e) + k * σ(e).
+   * Noemí (Ingeniera de Simulación / Visualización): Desarrolla la interfaz en Streamlit. Debe implementar los controles para los factores dinámicos (perfil horario, clima) y el slider para el parámetro de riesgo k. Su reto final es visualizar ambas rutas (rápida y segura) en el mapa, diferenciadas por color, y presentar la tabla de recomendaciones.
+   * Dariana (Líder de Calidad (QA) y Documentación): Define los escenarios de prueba para validar ambas rutas. Verifica que la "ruta segura" efectivamente evite las zonas de alta incertidumbre definidas por Luz. Lidera la redacción del informe en LaTeX, asegurándose de que la metodología del modelo de costo dual y la heurística estén claramente explicadas y justificadas con el informe de literatura.
+D. Plan de Trabajo Detallado y Ajustado
+Fase 1: Avances y Cierre del Núcleo Básico (Hasta el Martes 01/07)
+   * Objetivo: Demostrar un prototipo funcional con ruteo estático.
+   * Tareas:
+   * Luz: Tener listo el grafo base de Tacna/Arequipa con OSMnx.
+   * Edith: Tener una función A* que encuentre la ruta más corta por distancia.
+   * Noemí: Tener una UI básica que muestre el mapa y la ruta estática.
+   * Danilo: Integrar estos componentes.
+   * Dariana: Estructurar el documento en Overleaf y el plan de pruebas.
+   * Entregable (01/07): Una aplicación que muestra la ruta geográficamente más corta en el mapa.
+Fase 2: Implementación del Modelo Dinámico y Dual (02/07 – 09/07)
+   * Objetivo: Construir el corazón del sistema experto.
+   * Tareas:
+   * Luz: Enriquecer el grafo con todos los atributos estáticos necesarios (velocidad_base, tipo_via, sigma_base).
+   * Edith: Reemplazar el costo de distancia con las dos funciones de costo dependientes del tiempo (Costo_Rapido y Costo_Seguro). Modificar el sistema para que pueda ejecutar A* dos veces por cada consulta.
+   * Noemí: Añadir a la UI los controles para simular el tráfico (perfiles horarios) y el parámetro de riesgo k.
+   * Danilo: Integrar el nuevo motor de costo dual y el flujo de doble ejecución de A*.
+   * Dariana: Empezar a probar la lógica. ¿Cambia la ruta al seleccionar "Hora Punta"? ¿La "ruta segura" es diferente de la "rápida"?
+   * Entregable: La aplicación puede generar internamente las dos rutas, aunque la UI final de recomendación aún esté en desarrollo.
+Fase 3: Simulación Final, UI de Recomendación y Producción (10/07 – 16/07)
+   * Objetivo: Finalizar el proyecto y preparar todos los entregables.
+   * Tareas:
+   * Noemí: Implementar el panel final de recomendaciones en la UI, mostrando ambas rutas en el mapa con colores distintos y la tabla comparativa (tiempo, fiabilidad, etc.).
+   * Dariana y Noemí: Ejecutar los escenarios de simulación finales para el informe y el video. Demostrar un caso claro donde la ruta rápida y la segura son diferentes.
+   * Todos: Finalizar el informe en LaTeX. La sección de Metodología es crítica y debe ser detallada por Edith, Luz y Dariana.
+   * Todos: Grabar el video de demostración (máx. 7 min) y preparar la presentación oral (15 min).
+   * Entregable (17/07): Proyecto finalizado y todos los materiales listos para la entrega.
+Factores del Costo a Considerar
+La efectividad del algoritmo depende de la calidad de la función de costo. Basado en las secciones 3.2 y 3.3 del informe, estos son los factores que deben modelar:
+1. Factores Estáticos (Responsabilidad principal: Luz)
+Luz debe añadir estos atributos a cada calle (arco) en el grafo de NetworkX. Estos factores son la base para calcular el tiempo de viaje.
+   * Jerarquía y Tipo de Vía: Este es el factor más importante. Define características como límites de velocidad, número de carriles y prioridad de paso.
+   * Implementación: Crear un atributo tipo_via en el grafo (ej: 'avenida', 'jirón', 'calle_residencial') y un atributo velocidad_base que represente la velocidad promedio realista para ese tipo de vía.
+   * Calidad de la Vía: El informe menciona que una mala calidad del pavimento reduce la velocidad máxima segura.
+   * Implementación: Crear un atributo factor_calidad (ej. un multiplicador de 1.0 para una vía buena, 1.2 para una regular). Este factor penalizará el tiempo de viaje en calles en mal estado.
+   * Restricciones Geométricas: Se refiere a calles demasiado estrechas o giros imposibles para ciertos vehículos (como un camión de bomberos).
+   * Implementación: Para estas calles, se les puede asignar un costo de tiempo infinito para que el algoritmo de Edith nunca las elija para ese tipo de vehículo.
+2. Factores Dinámicos (Gestionados en la UI de Noemí, usados por Edith)
+Estos factores son los que permiten que el sistema se adapte en tiempo real. Edith debe asegurarse de que su función de costo los utilice.
+   * Congestión Vehicular: Es la variable dinámica más crítica. Como se acordó, se simulará con perfiles horarios.
+   * Implementación: El sistema aplicará un factor_congestion a las calles dependiendo de la hora del día seleccionada. Este factor será más alto para las 'avenidas' en 'hora punta'.
+   * Condiciones Climáticas: La lluvia o niebla reducen las velocidades seguras en toda la red.
+   * Implementación: Un selector en la UI ("Lluvia") aplicará un factor de penalización global a los tiempos de viaje.
+   * Incidentes Imprevistos: Accidentes, bloqueos, obras, etc.
+   * Implementación: El sistema debe permitir al usuario (despachador) marcar una calle como bloqueada. Esto le asignará un costo infinito a ese arco, eliminándolo efectivamente de las rutas posibles.
+
+
+
+
+1. Aplicación de Probabilidades para la Incertidumbre
+En lugar de tratar el tiempo de viaje como un número fijo, lo abordamos como un problema de alta incertidumbre, tal como lo pide el enfoque.
+   * Variables Aleatorias: Modelamos el tiempo de viaje para cada calle (arco e) como una variable aleatoria que sigue una Distribución Normal: Tiempo(e) ~ N(μ, σ).
+   * La Media (μ) representa el tiempo de viaje esperado, calculado a partir de factores como la velocidad base, la congestión simulada y el tipo de vía.
+   * La Desviación Estándar (σ) representa la incertidumbre o volatilidad de esa calle. Le asignamos un valor de σ más alto a calles con factores que aumentan la imprevisibilidad (mala calidad del pavimento, zonas de comercio informal, etc.), capturando la realidad local.
+   * Modelos Probabilísticos: Aunque no implementamos una red bayesiana completa, usamos sus conceptos. La
+σ de una calle se puede ver como una probabilidad condicional simplificada basada en las características de la vía. Esto nos permite cuantificar la incertidumbre de una manera práctica.
+2. Integración de Técnicas de Optimización
+El núcleo de nuestro sistema es un potente algoritmo de optimización para encontrar la ruta más eficiente.
+      * Algoritmo de Búsqueda y Optimización: Usamos A*, un algoritmo de búsqueda "informada" de primer nivel, para resolver el Problema del Camino Más Corto.
+      * Función Objetivo (Costo a Minimizar): No solo optimizamos el tiempo promedio. Nuestra función de costo Costo_Robusto(e) = μ(e) + k * σ(e) es una forma de optimización robusta simplificada. El sistema busca minimizar una combinación ponderada del tiempo esperado y su incertidumbre, encontrando rutas que son un equilibrio inteligente entre rapidez y fiabilidad. Esto es una técnica de optimización avanzada.
+3. Satisfacción de Restricciones
+El sistema modela y respeta múltiples restricciones del mundo real para asegurar que las soluciones sean viables.
+      * Restricciones Estáticas: El grafo base construido por Luz contendrá restricciones inherentes como:
+      * Calles de un solo sentido (direccionalidad de los arcos).
+      * Restricciones de giro (no modelar arcos entre ciertas intersecciones).
+      * Restricciones de vehículos (un camión de bomberos no puede entrar en un pasaje, asignando un costo infinito a ese arco para ese vehículo).
+      * Restricciones Dinámicas: La interfaz desarrollada por Noemí permitirá al despachador imponer restricciones en tiempo real:
+      * Incidentes: Marcar una calle como "bloqueada" le asigna un costo infinito, obligando al algoritmo a encontrar una ruta alternativa.
+      * Esto cumple con la idea de encontrar "soluciones viables bajo restricciones específicas".
+En resumen, el proyecto no solo toca uno de los temas, sino que integra profundamente tres pilares de la inteligencia artificial (probabilidad, optimización y restricciones) para crear una solución completa y robusta, cumpliendo con creces las expectativas del enfoque temático más exigente de la lista.
+________________
+
+
+Detalle de la Heurística de A* a Implementar (Tarea para Edith)
+1. Justificación del Uso de Heurísticas en A*
+Primero, recordemos cómo funciona A*. La fórmula para decidir qué nodo explorar a continuación es:
+f(n)=g(n)+h(n)
+      * g(n): Es el costo real y conocido desde el punto de inicio hasta el nodo actual n. En tu caso, es la suma de los Costo(e) de la ruta ya recorrida.
+      * h(n): Es la heurística, una estimación inteligente del costo desde el nodo actual n hasta el destino. No es un cálculo exacto, es una "conjetura educada".
+¿Por qué es tan importante la heurística?
+      1. Eficiencia y Rendimiento: Sin una heurística (h(n)=0), A* se convierte en el algoritmo de Dijkstra. Dijkstra explora "a ciegas" en todas las direcciones, expandiéndose como una mancha de aceite. Es exhaustivo pero lento. Una buena heurística le da a A* una "sensación de dirección", priorizando los caminos que
+parecen acercarse más al objetivo, lo que reduce drásticamente el número de nodos a explorar y acelera enormemente la búsqueda de la ruta.
+      2. Cumplimiento del Objetivo del Curso: El documento del curso pide explícitamente la aplicación de técnicas de optimización para lograr soluciones eficientes. Experimentar con heurísticas es una forma directa de investigar y demostrar cómo se optimiza el rendimiento de un algoritmo de búsqueda.
+      3. Garantía de Optimalidad (La Admisibilidad): Para que A* garantice encontrar la ruta óptima, la heurística debe ser admisible. Una heurística es admisible si nunca sobreestima el costo real para llegar al destino. En tu caso, la estimación de tiempo de la heurística debe ser siempre menor o igual al tiempo que realmente tomará la mejor ruta posible desde ese punto. Justificar que tu heurística elegida es admisible es una marca de rigor técnico.
+
+
+Recomendación basada en el informe: Para este proyecto, la heurística más adecuada es la "Distancia Euclidiana / Velocidad Máxima". La tabla comparativa de la sección 4.5 la destaca por tener una complejidad de pre-procesamiento "Nula" y requisitos de memoria "Nulos", lo que la hace perfecta para un proyecto con un plazo definido.
+¿Cómo implementarla y justificarla?
+         1. Fórmula: h(n)=(Distancia Geodésica(n,destino)​) / (Velocidad Máxima permitida en el mapa)
+         2. Detalle de la Implementación:
+         * Distancia Geodésica: Es la distancia en línea recta entre el nodo actual n y el nodo destino. Se calcula usando las coordenadas de latitud y longitud de los nodos y una fórmula como la de Haversine.
+         * Velocidad Máxima Global: Este es el punto clave para la admisibilidad. El informe enfatiza que la heurística nunca debe sobreestimar el costo real. Como el costo es tiempo, se debe encontrar la velocidad máxima legal o teórica más alta de toda la red (ej. 100 km/h si hay una Vía Expresa). Al dividir la distancia en línea recta (la más corta posible) por la velocidad más alta posible, se garantiza que el tiempo estimado por la heurística siempre será menor o igual al tiempo real del camino más rápido. Esto cumple la condición de admisibilidad.
+         3. Justificación en el Informe: En su artículo, pueden justificar esta elección explicando que, según la literatura revisada, las heurísticas más avanzadas como Contraction Hierarchies (CH) o Landmarks (ALT) requieren un costoso pre-procesamiento. Dado el alcance del proyecto, se optó por una heurística simple y garantizada de ser admisible, que no requiere pre-cálculo y sirve como una base sólida para el algoritmo A*, enfocando el esfuerzo de desarrollo en la robustez de la función de costo dependiente del tiempo.
+Heurística 2: La Línea Base (Heurística Cero)
+         * Fórmula: h(n)=0
+         * ¿Qué es?: No hacer ninguna estimación. Esto convierte A* en el algoritmo de Dijkstra.
+         * ¿Para qué experimentar?: Es su punto de comparación o control. Les permitirá medir cuántos nodos exploró y cuánto tiempo tardó en encontrar la ruta. Luego, pueden comparar estos resultados con los de otras heurísticas para cuantificar la mejora en el rendimiento. Por ejemplo: "Nuestra heurística Euclidiana redujo el número de nodos explorados en un 70% en comparación con la búsqueda de Dijkstra".
+
+
+
+Tipo de Lugar de Alta Incertidumbre
+	Ejemplos Específicos (Contexto Arequipa)
+	Causa Principal de la Incertidumbre
+	Multiplicador de Riesgo Sugerido
+	1. Mercados y Zonas Comerciales Populares
+	Plataforma Comercial Andrés Avelino Cáceres, Feria del Altiplano, alrededores de "La Parada".
+	Flujo masivo y caótico de peatones, comercio ambulatorio que ocupa carriles, carga y descarga de mercadería a cualquier hora.
+	1.70 - 2.50 (70% a 150% de penalización sobre el tiempo esperado). Se aplicaría durante horas comerciales.
+	2. Paraderos Informales en Avenidas
+	Tramos de la Av. Ejército, Av. Goyeneche, Av. La Marina donde paran "combis" y "colectivos".
+	Detenciones súbitas e impredecibles de vehículos de transporte público, que bloquean el tráfico sin previo aviso.
+	1.40 - 1.60 (40% a 60% de penalización). Este riesgo es casi constante durante el día.
+	3. Calles Angostas del Centro Histórico
+	Jirones y calles como San Francisco, Santa Catalina (partes no peatonales), Calle Melgar.
+	Un solo vehículo lento, una descarga o un auto mal estacionado puede generar un cuello de botella para toda la calle. Dificultad de maniobra para patrullas.
+	1.30 - 1.50 (30% a 50% de penalización).
+	4. Zonas Escolares (Horas Pico)
+	Alrededores de colegios grandes (ej. Independencia Americana, Prescott, San José) entre 7:00-8:30 am y 1:00-2:30 pm.
+	Congestión extrema por padres de familia estacionando en doble o triple fila, cruce masivo de escolares.
+	2.00 - 3.50 (100% a 250% de penalización). Este es el riesgo más alto, pero está muy acotado en el tiempo.
+	5. Vías No Asfaltadas o en Mal Estado
+	Calles en zonas periféricas de distritos como Cerro Colorado, Yura, Paucarpata.
+	La velocidad real depende totalmente del estado del camino y del clima, no del límite de velocidad. Alto riesgo de pinchazos o daños al vehículo.
+	1.80 - 3.00 (80% a 200% de penalización). Un riesgo alto y permanente.
+	6. Alrededores de Hospitales y Clínicas
+	Hospital Honorio Delgado, Hospital Goyeneche, Clínica Arequipa.
+	Flujo constante de ambulancias, taxis dejando pacientes, visitas buscando estacionamiento. Las entradas y salidas suelen estar congestionadas.
+	1.25 - 1.40 (25% a 40% de penalización).
+	7. Cruces o Intersecciones sin Semáforo
+	Intersecciones de jirones en barrios tradicionales o cruces de avenidas con poca señalización.
+	El tiempo de cruce depende de la "negociación" entre conductores. Es altamente variable y dependiente de la densidad del tráfico en la vía que cruza.
+	1.30 - 1.70 (30% a 70% de penalización). El riesgo aumenta con la congestión de la vía principal.
