@@ -210,23 +210,8 @@ if G is not None:
     # Mapa interactivo con sistema experto integrado
     st.markdown("### 🗺️ Mapa de Operaciones")
     
-    # Controles externos del mapa
-    col_map1, col_map2 = st.columns([3, 1])
-    
-    with col_map2:
-        st.markdown("**🗺️ Controles del Mapa**")
-        mostrar_grafo = st.checkbox("Mostrar red vial completa", value=False, help="Visualizar todas las conexiones del grafo")
-        if mostrar_grafo:
-            st.info(f"""
-            **📊 Red Vial Completa:**
-            - 🛣️ Total aristas: {len(edges_data)}
-            - 🏛️ Nodos: {len(nodes_data)}
-            - 📈 Conectividad: 100% bidireccional
-            """)
-    
-    with col_map1:
-        # Crear HTML del mapa
-        mapa_html = f"""
+    # Crear HTML del mapa
+    mapa_html = f"""
     <!DOCTYPE html>
     <html>
     <head>

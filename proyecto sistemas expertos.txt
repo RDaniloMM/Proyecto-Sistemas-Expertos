@@ -88,7 +88,7 @@ En resumen, el proyecto no solo toca uno de los temas, sino que integra profunda
 ________________
 
 
-Detalle de la Heurística de A* a Implementar (Tarea para Edith)
+Detalle de la Heurística de A* a Implementar
 1. Justificación del Uso de Heurísticas en A*
 Primero, recordemos cómo funciona A*. La fórmula para decidir qué nodo explorar a continuación es:
 f(n)=g(n)+h(n)
@@ -111,12 +111,11 @@ Recomendación basada en el informe: Para este proyecto, la heurística más ade
 Heurística 2: La Línea Base (Heurística Cero)
          * Fórmula: h(n)=0
          * ¿Qué es?: No hacer ninguna estimación. Esto convierte A* en el algoritmo de Dijkstra.
-         * ¿Para qué experimentar?: Es su punto de comparación o control. Les permitirá medir cuántos nodos exploró y cuánto tiempo tardó en encontrar la ruta. Luego, pueden comparar estos resultados con los de otras heurísticas para cuantificar la mejora en el rendimiento. Por ejemplo: "Nuestra heurística Euclidiana redujo el número de nodos explorados en un 70% en comparación con la búsqueda de Dijkstra".
-
-
+         * ¿Para qué experimentar?: Es su punto de comparación o control. Les permitirá medir cuántos nodos exploró y cuánto tiempo tardó en encontrar la ruta. Luego, pueden comparar estos resultados con los de otras heurísticas para cuantificar la mejora en el rendimiento. Por ejemplo: "Nuestra heurística Euclidiana redujo el número de nodos explorados en un 70% en comparación con la búsqueda de Dijkstra".-
+Rutear al "Punto de Acceso" Óptimo, no al Nodo Más Cercano
 
 Tipo de Lugar de Alta Incertidumbre
-	Ejemplos Específicos (Contexto Arequipa)
+	Ejemplos Específicos
 	Causa Principal de la Incertidumbre
 	Multiplicador de Riesgo Sugerido
 	1. Mercados y Zonas Comerciales Populares
