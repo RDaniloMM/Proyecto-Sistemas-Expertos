@@ -119,27 +119,25 @@ Tipo de Lugar de Alta Incertidumbre
 	Causa Principal de la Incertidumbre
 	Multiplicador de Riesgo Sugerido
 	1. Mercados y Zonas Comerciales Populares
-	Plataforma Comercial Andrés Avelino Cáceres, Feria del Altiplano, alrededores de "La Parada".
+	Mercadillo Bolognesi, etc.
 	Flujo masivo y caótico de peatones, comercio ambulatorio que ocupa carriles, carga y descarga de mercadería a cualquier hora.
 	1.70 - 2.50 (70% a 150% de penalización sobre el tiempo esperado). Se aplicaría durante horas comerciales.
 	2. Paraderos Informales en Avenidas
-	Tramos de la Av. Ejército, Av. Goyeneche, Av. La Marina donde paran "combis" y "colectivos".
+   Paradero mosca, etc.
 	Detenciones súbitas e impredecibles de vehículos de transporte público, que bloquean el tráfico sin previo aviso.
 	1.40 - 1.60 (40% a 60% de penalización). Este riesgo es casi constante durante el día.
 	3. Calles Angostas del Centro Histórico
-	Jirones y calles como San Francisco, Santa Catalina (partes no peatonales), Calle Melgar.
+	Jirones y calles...
 	Un solo vehículo lento, una descarga o un auto mal estacionado puede generar un cuello de botella para toda la calle. Dificultad de maniobra para patrullas.
 	1.30 - 1.50 (30% a 50% de penalización).
 	4. Zonas Escolares (Horas Pico)
-	Alrededores de colegios grandes (ej. Independencia Americana, Prescott, San José) entre 7:00-8:30 am y 1:00-2:30 pm.
+	Alrededores de colegios grandes  entre 7:00-8:30 am y 1:00-2:30 pm.
 	Congestión extrema por padres de familia estacionando en doble o triple fila, cruce masivo de escolares.
 	2.00 - 3.50 (100% a 250% de penalización). Este es el riesgo más alto, pero está muy acotado en el tiempo.
 	5. Vías No Asfaltadas o en Mal Estado
-	Calles en zonas periféricas de distritos como Cerro Colorado, Yura, Paucarpata.
 	La velocidad real depende totalmente del estado del camino y del clima, no del límite de velocidad. Alto riesgo de pinchazos o daños al vehículo.
 	1.80 - 3.00 (80% a 200% de penalización). Un riesgo alto y permanente.
 	6. Alrededores de Hospitales y Clínicas
-	Hospital Honorio Delgado, Hospital Goyeneche, Clínica Arequipa.
 	Flujo constante de ambulancias, taxis dejando pacientes, visitas buscando estacionamiento. Las entradas y salidas suelen estar congestionadas.
 	1.25 - 1.40 (25% a 40% de penalización).
 	7. Cruces o Intersecciones sin Semáforo
