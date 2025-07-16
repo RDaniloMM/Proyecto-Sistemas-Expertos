@@ -8,6 +8,7 @@ import random
 import math
 import datetime
 import time
+import pytz
 import json
 from geopy.distance import geodesic
 import streamlit.components.v1 as components
@@ -25,7 +26,8 @@ st.title("🚨 Sistema Experto de Soporte a la Decisión para Optimización de R
 st.markdown("*Modelo de Costo Dual Dependiente del Tiempo - Tacna, Perú*")
 
 # Obtener hora actual y nivel de tráfico dinámico
-hora_actual = datetime.datetime.now()
+peru_tz = pytz.timezone("America/Lima")
+hora_actual = datetime.datetime.now(peru_tz)
 hora_formateada = hora_actual.strftime("%H:%M:%S - %d/%m/%Y")
 
 def obtener_nivel_trafico(hora):
@@ -37,13 +39,13 @@ def obtener_nivel_trafico(hora):
     if 6.5 <= hora_num < 8:  # 6:30 AM - 8:00 AM
         return "trafico_extremo", "🔴 Tráfico Extremo", "Hora pico escolar - máxima congestión"
     elif 8 <= hora_num < 11:  # 8:00 AM - 11:00 AM
-        return "trafico_alto", "� Tráfico Alto", "Mañana laboral - congestión alta"
+        return "trafico_alto", "🟠 Tráfico Alto", "Mañana laboral - congestión alta"
     elif 11 <= hora_num < 13:  # 11:00 AM - 1:00 PM
         return "trafico_extremo", "🔴 Tráfico Extremo", "Mediodía - máxima congestión"
     elif 13 <= hora_num < 17:  # 1:00 PM - 5:00 PM
         return "trafico_medio", "🟡 Tráfico Medio", "Tarde laboral - congestión media"
     elif 17 <= hora_num < 20:  # 5:00 PM - 8:00 PM
-        return "trafico_alto", "� Tráfico Alto", "Hora pico vespertina - congestión alta"
+        return "trafico_alto", "🟠 Tráfico Alto", "Hora pico vespertina - congestión alta"
     elif 20 <= hora_num < 23:  # 8:00 PM - 11:00 PM
         return "trafico_bajo", "🟢 Tráfico Bajo", "Noche temprana - poco tráfico"
     else:  # 11:00 PM - 6:30 AM
@@ -267,19 +269,31 @@ st.sidebar.info(f"""
 G = cargar_grafo_tacna()
 
 if G is not None:
-    # Preparar datos del sistema
-    nodes_list = list(G.nodes())
-    num_patrullas = min(5, len(nodes_list))
-    patrol_nodes = random.sample(nodes_list, num_patrullas)
+    # --- INICIO DE LA CORRECCIÓN ---
+    # Usar el estado de la sesión (st.session_state) para que las patrullas
+    # no se reinicien en cada interacción con la UI.
 
-    # Información de patrullas con estado
-    patrullas_data = []
-    for i, node in enumerate(patrol_nodes):
-        patrullas_data.append({
-            'id': f"U-{i+1:02d}",
-            'nodo_actual': int(node),
-            'status': 'disponible'
-        })
+    # Comprobar si las patrullas ya han sido inicializadas en esta sesión.
+    if 'patrullas_data' not in st.session_state:
+        nodes_list = list(G.nodes())
+        num_patrullas = min(5, len(nodes_list))
+        patrol_nodes = random.sample(nodes_list, num_patrullas)
+
+        # Crear la lista inicial de patrullas
+        patrullas_data_inicial = []
+        for i, node in enumerate(patrol_nodes):
+            patrullas_data_inicial.append({
+                'id': f"U-{i+1:02d}",
+                'nodo_actual': int(node),
+                'status': 'disponible'
+            })
+        
+        # Guardar la lista en el estado de la sesión para persistirla
+        st.session_state.patrullas_data = patrullas_data_inicial
+
+    # En cada recarga, obtener los datos de las patrullas desde el estado de la sesión
+    patrullas_data = st.session_state.patrullas_data
+    # --- FIN DE LA CORRECCIÓN ---
 
     # Preparar datos de nodos para JavaScript
     nodes_data = {}
@@ -360,7 +374,7 @@ if G is not None:
         - 🌫️ Neblina: ×1.6 en σ(e)
         - 🔴 Tráfico extremo: ×2.0 en σ(e)
         
-        **� Factor k = {factor_riesgo_k}:**
+        **🛡️ Factor k = {factor_riesgo_k}:**
         {'🔴 Muy Conservador' if factor_riesgo_k > 2.5 else '🟠 Conservador' if factor_riesgo_k > 2.0 else '🟡 Moderado' if factor_riesgo_k > 1.0 else '🟢 Agresivo'}
         """)
     
@@ -1327,7 +1341,7 @@ if G is not None:
                             <b>1. 🏃‍♂️ Ruta Rápida</b><br>
                             ⏱️ <b>Tiempo estimado:</b> ${{formatearTiempo(tiempoRealRapida.tiempoTotal)}}<br>
                             📏 <b>Distancia:</b> ${{formatearDistancia(tiempoRealRapida.distanciaTotal)}}<br>
-                            � <b>Velocidad promedio:</b> ${{tiempoRealRapida.velocidadPromedio.toFixed(1)}} km/h<br>
+                            🚗 <b>Velocidad promedio:</b> ${{tiempoRealRapida.velocidadPromedio.toFixed(1)}} km/h<br>
                             📍 <b>Segmentos:</b> ${{tiempoRealRapida.numSegmentos}} tramos<br>
                             🔍 <b>Nodos explorados:</b> ${{rutaRapida.nodesExplored}}<br>
                             🧮 <b>Función:</b> μ(e)
@@ -1354,7 +1368,7 @@ if G is not None:
                             <b>2. 🛡️ Ruta Segura</b><br>
                             ⏱️ <b>Tiempo estimado:</b> ${{formatearTiempo(tiempoRealSegura.tiempoTotal)}}<br>
                             📏 <b>Distancia:</b> ${{formatearDistancia(tiempoRealSegura.distanciaTotal)}}<br>
-                            � <b>Velocidad promedio:</b> ${{tiempoRealSegura.velocidadPromedio.toFixed(1)}} km/h<br>
+                            🚗 <b>Velocidad promedio:</b> ${{tiempoRealSegura.velocidadPromedio.toFixed(1)}} km/h<br>
                             📍 <b>Segmentos:</b> ${{tiempoRealSegura.numSegmentos}} tramos<br>
                             🔍 <b>Nodos explorados:</b> ${{rutaSegura.nodesExplored}}<br>
                             📊 <b>Diferencia tiempo:</b> +${{formatearTiempo(diferenciaTiempo)}} (+${{diferenciaPorcentaje}}%)<br>
@@ -1443,9 +1457,10 @@ if G is not None:
     components.html(mapa_html, height=750)
 
     # Estado actual del sistema
-    st.markdown("### 🔄 Estado Actual")
+    st.markdown("### 🔄 Estado Actual de Patrullas (Persistente)")
+    # El DataFrame se actualiza, pero los datos subyacentes se mantienen
     estado_df = pd.DataFrame(patrullas_data)
-    st.dataframe(estado_df, hide_index=True)
+    st.dataframe(estado_df, use_container_width=True, hide_index=True)
 
 else:
     st.error("❌ No se pudo cargar el grafo de Tacna. Verifique la conexión a internet y reinicie la aplicación.")
