@@ -8,9 +8,9 @@ import random
 import math
 import datetime
 import time
-import pytz
 import json
 from geopy.distance import geodesic
+from zoneinfo import ZoneInfo
 import streamlit.components.v1 as components
 
 # Configuración de la página
@@ -21,12 +21,13 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Título principal según especificaciones del proyecto
-st.title("🚨 Sistema Experto de Soporte a la Decisión para Optimización de Rutas de Emergencia")
-st.markdown("*Modelo de Costo Dual Dependiente del Tiempo - Tacna, Perú*")
+# --- SINCRONIZACIÓN DE HORA CON PERÚ (UTC-5) USANDO ZONEINFO ---
+try:
+    peru_tz = ZoneInfo("America/Lima")
+except Exception:
+    # Fallback a un offset fijo si ZoneInfo falla
+    peru_tz = datetime.timezone(datetime.timedelta(hours=-5), name='PET')
 
-# Obtener hora actual y nivel de tráfico dinámico
-peru_tz = pytz.timezone("America/Lima")
 hora_actual = datetime.datetime.now(peru_tz)
 hora_formateada = hora_actual.strftime("%H:%M:%S - %d/%m/%Y")
 
