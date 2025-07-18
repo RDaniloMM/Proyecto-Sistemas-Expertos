@@ -53,7 +53,7 @@ def cargar_grafo_tacna():
                     st.write(f"⚠️ No se encontraron {key}")
                     pois[key] = None
             
-            # Simular calles en mal estado
+            # simulacion calles en mal estado
             for u, v, data in G.edges(data=True):
                 data['mal_estado'] = False
                 htype = data.get('highway', 'residential')
@@ -62,7 +62,7 @@ def cargar_grafo_tacna():
                 if htype in ['residential', 'unclassified'] and np.random.rand() < 0.05:
                     data['mal_estado'] = True
             
-            # Identificar intersecciones sin semáforo
+            #  intersecciones sin semáforo
             nodes_sin_semaforo = set()
             for node, node_data in G.nodes(data=True):
                 if not node_data.get('highway') == 'traffic_signals':
@@ -80,11 +80,11 @@ def cargar_grafo_tacna():
                     if len(unique_street_types) > 1 and all(s in ['residential', 'tertiary', 'unclassified'] for s in unique_street_types):
                         nodes_sin_semaforo.add(node)
             
-            # Etiquetar arcos
+            # Etiquetas arcos
             for u, v, data in G.edges(data=True):
                 data['cruce_sin_semaforo'] = v in nodes_sin_semaforo
             
-            # Aplicar reglas de etiquetado
+            # reglas de etiquetado
             def get_risk_attributes(edge_data, u, v):
                 velocidad_kmh = 50.0
                 penalizacion_tiempo = 1.0

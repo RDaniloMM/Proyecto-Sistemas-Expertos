@@ -1,19 +1,14 @@
 import streamlit as st
 import osmnx as ox
 import networkx as nx
-import folium
 import pandas as pd
-import numpy as np
 import random
-import math
 import datetime
 import pytz
 import json
-from geopy.distance import geodesic
 from zoneinfo import ZoneInfo
 import streamlit.components.v1 as components
 
-# Configuración de la página
 st.set_page_config(
     page_title="Sistema Experto de Emergencias",
     page_icon="🚨",
@@ -21,7 +16,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- SINCRONIZACIÓN DE HORA CON PERÚ (UTC-5) USANDO ZONEINFO ---
 try:
     peru_tz = ZoneInfo("America/Lima")
 except Exception:
@@ -33,7 +27,7 @@ hora_formateada = hora_actual.strftime("%H:%M:%S - %d/%m/%Y")
 
 def obtener_nivel_trafico(hora):
     """
-    Determina el nivel de tráfico basado en la hora del día con 5 niveles granulares.
+    Determina el nivel de tráfico basado en la hora del día con 5 niveles.
     """
     hora_num = hora.hour + hora.minute / 60.0
     
@@ -302,7 +296,7 @@ if G is not None:
                 'lon': float(data['x'])
             }
 
-    # Preparar datos de arcos con modelo de costo
+    # datos de arcos con modelo de costo
     edges_data = []
     for u, v, key, data in G.edges(data=True, keys=True):
         if int(u) in nodes_data and int(v) in nodes_data:
@@ -926,7 +920,7 @@ if G is not None:
                 const costoRapido = muDinamico; // Ruta rápida: solo tiempo esperado μ(e)
                 const costoSeguro = muDinamico + (FACTOR_RIESGO_K * sigmaDinamico); // Ruta segura: μ(e) + k×σ(e)
 
-                // Agregar conexiones bidireccionales
+                // conexiones bidireccionales
                 listaAdyacencia[edge.source].push({{
                     node: edge.target,
                     length: edge.length,
