@@ -28,8 +28,5 @@ echo "  INSTALACIÓN COMPLETADA"
 echo "======================================"
 echo
 echo "Para ejecutar el sistema:"
-echo "  python3 pse.py"
-echo
-echo "Para interfaz web:"
-echo "  streamlit run pse.py"
-echo
+echo "  streamlit run sistema_experto_emergencias_fixed.py"
+
