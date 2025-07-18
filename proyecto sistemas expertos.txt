@@ -144,3 +144,20 @@ Tipo de Lugar de Alta Incertidumbre
 	Intersecciones de jirones en barrios tradicionales o cruces de avenidas con poca señalización.
 	El tiempo de cruce depende de la "negociación" entre conductores. Es altamente variable y dependiente de la densidad del tráfico en la vía que cruza.
 	1.30 - 1.70 (30% a 70% de penalización). El riesgo aumenta con la congestión de la vía principal.
+
+
+Flujo:
+- Vamos a ver el Mapa de Tacna, peru
+- Nosotros definimos el n, primero ingresamos el valor n
+- Aparecen n patrullas moviéndose por Tacna en tiempo real
+velocidad: 40km/h al inicio (pero cuando se seleccione el destino, la patrulla seleccionada deberá adecuar su velocidad a los factores como trafico/clima/otros)
+- Nosotros ingresamos la hora (Si es de 6:30 a 8 am es full trafico, si es de 8am a 11 am es medio trafico, de 11am a 1pm full trafico, de 1pm a 5pm medio trafico, 5pm a 8pm mucho trafico, 8pm a 11pm hay poco trafico, 11pm a 6:30 am no hay nada de trafico)
+- Nosotros ingresamos el clima (cuando llueve la velocidad baja, cuando es soleado la velocidad aumenta)
+- Nosotros ingresamos Incidentes Imprevistos ( seleccionamos una ubicación/nodo y ese nodo indica de que hay accidentes/bloqueo/u obras por la cual la patrulla no podrá pasar por ese camino)
+
+[Botoncito: Actualizar Mapas]
+===================================================================
+- Seleccionar evento (robo, asalto, denuncia, etc.)
+- En el mapa, Nosotros seleccionamos un punto (Incidente) y la patrulla que este a la distancia mas optima (según lo que elijamos [mas corta /mas segura]) se acerca al incidente y muestra un aviso
+(Indicando que patrulla calculo la ruta mas optima)
+

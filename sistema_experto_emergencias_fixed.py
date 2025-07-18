@@ -7,7 +7,7 @@ import numpy as np
 import random
 import math
 import datetime
-import time
+import pytz
 import json
 from geopy.distance import geodesic
 from zoneinfo import ZoneInfo
@@ -102,20 +102,17 @@ st.markdown("---")
 # --- Funciones de Cache y Carga del Grafo ---
 @st.cache_data
 def cargar_grafo_tacna():
-    """
-    Carga un grafo enriquecido de Tacna con atributos estáticos para el modelo probabilístico.
-    """
     try:
         place = "Tacna, Peru"
-        # Crear grafo dirigido simplificado y fuertemente conectado
+        # grafo dirigido simplificado y fuertemente conectado
         G = ox.graph_from_place(place, network_type='drive', simplify=True)
         
-        # Asegurar conectividad fuerte para evitar islas
+        # Se asegura conectividad fuerte para evitar islas
         if not nx.is_strongly_connected(G):
             largest_scc = max(nx.strongly_connected_components(G), key=len)
             G = G.subgraph(largest_scc).copy()
 
-        # Convertir a enteros para compatibilidad con JavaScript
+        # Conversion a enteros para compatibilidad con JavaScript
         G = nx.convert_node_labels_to_integers(G, label_attribute='osmid')
         
         # Enriquecimiento del grafo con atributos estáticos
@@ -123,12 +120,12 @@ def cargar_grafo_tacna():
             # Longitud del arco
             length = data.get('length', 100)
             
-            # Clasificar tipo de vía basado en atributos OSM
+            # Clasificacion tipo de vía basado en atributos OSM
             highway = data.get('highway', 'residential')
             if isinstance(highway, list):
                 highway = highway[0]
             
-            # Mapeo de tipos de vía según especificaciones
+            # Mapeo de tipos de vía
             if highway in ['primary', 'trunk', 'motorway']:
                 tipo_via = 'avenida_principal'
                 velocidad_base = 50
@@ -150,7 +147,7 @@ def cargar_grafo_tacna():
                 sigma_base = 15
                 factor_calidad = 1.4
             
-            # Asignar atributos al arco
+            # atributos de los arcos
             G[u][v][key]['tipo_via'] = tipo_via
             G[u][v][key]['velocidad_base'] = velocidad_base
             G[u][v][key]['sigma_base'] = sigma_base
@@ -663,22 +660,22 @@ if G is not None:
 
             // --- Visualización del Grafo de Red (Completa) ---
             function mostrarGrafoCompleto() {{
-                // Crear grupo de capas para el grafo
+                // grupo de capas para el grafo
                 grafoLayer = L.layerGroup();
                 
                 console.log(`🗺️ Visualizando grafo completo: ${{edges.length}} aristas disponibles`);
                 
-                // Crear set para evitar aristas duplicadas en visualización
+                // set para evitar aristas duplicadas en visualización
                 const aristasVisualizadas = new Set();
                 let aristasVisibles = 0;
                 
-                // Mostrar TODAS las aristas del grafo sin límite
+                // TODAS las aristas del grafo sin límite
                 edges.forEach(edge => {{
                     const sourceNode = nodes[edge.source];
                     const targetNode = nodes[edge.target];
                     
                     if (sourceNode && targetNode) {{
-                        // Crear ID único para la arista (bidireccional)
+                        // ID único para la arista (bidireccional)
                         const aristaId = `${{Math.min(edge.source, edge.target)}}-${{Math.max(edge.source, edge.target)}}`;
                         
                         // Solo agregar si no ha sido visualizada
@@ -715,7 +712,7 @@ if G is not None:
                                     opacity = 0.5;
                             }}
                             
-                            // Crear la línea del grafo
+                            // línea de grafo
                             L.polyline([
                                 [sourceNode.lat, sourceNode.lon],
                                 [targetNode.lat, targetNode.lon]
@@ -866,8 +863,8 @@ if G is not None:
                 // 2. Factor Climático
                 let factorClima = 1.0;
                 switch(CONDICION_CLIMA) {{
-                    case "lluvia": factorClima = 1.5; break;  // +50% tiempo
-                    case "neblina": factorClima = 1.4; break; // +40% tiempo
+                    case "lluvia": factorClima = 1.4; break;  // +40% tiempo
+                    case "neblina": factorClima = 1.3; break; // +30% tiempo
                     case "despejado": factorClima = 1.0; break;
                     default: factorClima = 1.0;
                 }}
@@ -901,7 +898,7 @@ if G is not None:
                     default: sigmaBase = 0.3; break;
                 }}
                 
-                // Aplicar factores de incertidumbre adicionales
+                //  factores de incertidumbre adicionales
                 let factorIncertidumbre = 1.0;
                 if (CONDICION_CLIMA === "lluvia") {{
                     factorIncertidumbre *= 1.8; // Mucha más incertidumbre en lluvia
@@ -1039,7 +1036,7 @@ if G is not None:
                     return {{ path: [inicio], cost: 0, nodesExplored: 1 }};
                 }}
                 
-                // Heurística admisible
+                // Heurística
                 function heuristica(nodoA, nodoB) {{
                     const pA = nodes[nodoA];
                     const pB = nodes[nodoB];
@@ -1054,10 +1051,10 @@ if G is not None:
                             Math.cos(lat1) * Math.cos(lat2) *
                             Math.sin(deltaLon/2) * Math.sin(deltaLon/2);
                     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                    const distancia = 6371000 * c;
+                    const distancia = 6371000 * c; // 6371000 es el radio de la Tierra en metros aprox.
                     
-                    const velocidadMaxMs = 20;
-                    return distancia / velocidadMaxMs;
+                    const velocidadMaxMs = 20; // 20 m/s = 72 km/h
+                    return distancia / velocidadMaxMs; //heurística final.
                 }}
                 
                 const openSet = new Set([inicio]);
@@ -1156,7 +1153,7 @@ if G is not None:
                         </style>
                     </div>`;
                 
-                // Asegurar que el panel esté visible durante el procesamiento
+                // Aseguramos que el panel esté visible durante el procesamiento
                 if (panelMinimized) {{
                     togglePanel();
                 }}
@@ -1181,7 +1178,7 @@ if G is not None:
                 }}, 100);
             }});
             
-            // --- Función de Procesamiento de Emergencia ---
+            // --- función de Procesamiento de Emergencia ---
             function procesarEmergencia(coordsIncidente) {{
                 try {{
                     // Encontrar nodo más cercano
@@ -1205,7 +1202,7 @@ if G is not None:
                     
                     console.log(`📍 Nodo destino: ${{nodoDestino}}, distancia: ${{distanciaMinima.toFixed(1)}}m`);
                     
-                    // Evaluar patrullas disponibles
+                    // evaluamos las patrullas disponibles
                     const patrullasDisponibles = patrullas.filter(p => p.status === 'disponible');
                     
                     if (patrullasDisponibles.length === 0) {{
@@ -1237,7 +1234,7 @@ if G is not None:
                         return;
                     }}
                     
-                    // Seleccionar mejor patrulla
+                    // seleccionamos la mejor patrulla
                     candidatos.sort((a, b) => a.tiempo - b.tiempo);
                     const mejorPatrulla = candidatos[0].patrulla;
                     
@@ -1328,7 +1325,7 @@ if G is not None:
                     
                     let htmlRecomendaciones = `<h5>🎯 Análisis Detallado para ${{mejorPatrulla.id}}</h5>`;
                     
-                    // Visualizar ruta rápida
+                    // visualización ruta rápida
                     if (rutaRapida && rutaRapida.path) {{
                         const coordsRuta = rutaRapida.path.map(n => [nodes[n].lat, nodes[n].lon]);
                         rutaRapidaLayer = L.polyline(coordsRuta, {{ 
@@ -1350,7 +1347,7 @@ if G is not None:
                         </div>`;
                     }}
                     
-                    // Visualizar ruta segura
+                    // Visualización ruta segura
                     if (rutaSegura && rutaSegura.path && tiempoRealSegura) {{
                         const coordsRuta = rutaSegura.path.map(n => [nodes[n].lat, nodes[n].lon]);
                         rutaSeguraLayer = L.polyline(coordsRuta, {{ 
@@ -1426,7 +1423,7 @@ if G is not None:
                 }}
             }}
 
-            // --- Función de Asignación de Patrulla ---
+            // --- función de Asignación de Patrulla ---
             window.asignarPatrulla = function(idPatrulla, tipoRuta) {{
                 console.log(`Asignando ${{idPatrulla}} con ruta ${{tipoRuta}}`);
                 
